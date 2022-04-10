@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
 import {useCreateUserWithEmailAndPassword} from 'react-firebase-hooks/auth'
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 const SignUp = () => {
           const [email, setEmail] = useState('')
           const [password, setPassword] = useState('')
           const [confirmPassword, setConfirmPassword] = useState('')
           const [error, setError] = useState('')
+          const navigate = useNavigate()
 
-          const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth)
+          const [createUserWithEmailAndPassword, user] = useCreateUserWithEmailAndPassword(auth)
 
           const handleEmailBlur = event => {
                     setEmail(event.target.value);
@@ -22,6 +23,10 @@ const SignUp = () => {
           const handleConfirmPassword = event => {
                     setConfirmPassword(event.target.value)
           } 
+
+          if(user){
+             navigate('/shop')
+          }
           const handleCreateUser = event => {
                     event.preventDefault();
                     if (password !== confirmPassword){
@@ -33,10 +38,7 @@ const SignUp = () => {
                               return;
                     }
                     createUserWithEmailAndPassword(email, password)
-                    .then(result => {
-                              const user = result.user;
-                              console.log(user)
-                    })
+                    
           }
          
           return(
@@ -61,6 +63,7 @@ const SignUp = () => {
                     <input onBlur={handleConfirmPassword} type='password' name ='password'></input>
                     </div>
                     <p style={{color:'red'}}>{error}</p>
+                  
                     <input className='form-submit' type="submit" value="Login" />
                   </form>
                   <p>already have an account <Link className='form-link' to ="/login" >Login</Link></p>
